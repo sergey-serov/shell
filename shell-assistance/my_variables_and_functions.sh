@@ -1,6 +1,12 @@
+##
+# Alias
+#
 
 alias df='df -h'
 alias du='du -sh'
+
+alias l='ls --group-directories-first -Fv'
+alias ll='ls --group-directories-first --human-readable -alFv'
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000000
@@ -34,6 +40,7 @@ BLINK='\e[5m'
 
 # Background colors. REMEMBER: first must be text color, then background color.
 MAGENTA_BG='\e[45m'
+PURPLE_BG='\e[45m'
 
 
 ##
@@ -86,18 +93,19 @@ init_my_variables () {
 ##
 # PS1
 #
-
+init_my_variables
 PROMPT_COMMAND=init_my_variables
 
 USER_AND_HOST="[${YELLOW}\u${COLOR_END}${BLUE}@${COLOR_END}${TURQUOISE}\h${COLOR_END}]"
 CURRENT_DIR="${DARK_GRAY}\$(pwd)${COLOR_END}"
-PS1="${GREEN}${BOLD}${HORIZONT}${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} ${REPO_INFO}\n🌌 "
+PS1="${PURPLE_BG} completed ${COLOR_END}\n${GREEN}${HORIZONT}${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} ${REPO_INFO}\n🌌 "
+
 
 ##
 # PS0
 #
 
-PS0="${PURPLE}command number: \# \n$HORIZONT${COLOR_END}"
+PS0="${PURPLE}command number: \# \n${HORIZONT}${COLOR_END}"
 
 
 # PS1="${GREEN}[\u@\h] \$(pwd) ============================================ [\t]${COLOR_END}\n🌌 "
@@ -108,6 +116,8 @@ PS0="${PURPLE}command number: \# \n$HORIZONT${COLOR_END}"
 ##
 # TODO
 #
+
+# Рефакторинг после прочтения книги.
 
 # debian_chroot
 # ls
