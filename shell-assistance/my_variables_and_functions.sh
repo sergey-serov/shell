@@ -44,25 +44,42 @@ PURPLE_BG='\e[45m'
 
 
 ##
-# Horizont line for PS1
+# Horizont line for PS0 and PS1
 #
 
-horisont () {
-    HORIZONT=
-    CONSOLE_WIDTH=$(($COLUMNS-11)) # 10 is place for time
+horisont_1 () {
+    HORIZONT_1=
+    local CONSOLE_WIDTH=$(($COLUMNS)) # place for time
     # create line
     while [ $CONSOLE_WIDTH -gt 0 ]
     do
-        HORIZONT="${HORIZONT}―" # Unicode U+2015 "Horisontal bar"
+        HORIZONT_1="${HORIZONT_1}―" # Unicode U+2015 "Horisontal bar"
         CONSOLE_WIDTH=$(($CONSOLE_WIDTH-1))
     done
     # add time at the end
-    HORIZONT="${HORIZONT} [\t]"
-
-    # unset temp vars
-    unset CONSOLE_WIDTH
+    HORIZONT_1="${HORIZONT_1}" #  [\t]
 }
 
+horisont_2 () {
+
+    HORIZONT_2=
+
+    local DATE_PATTERN="%A | %d %B | %Y | %T | week %U"
+    # echo 'debug 1: ' $DATE_PATTERN
+    local DATE_SYMBOLS=$(printf "%(${DATE_PATTERN})T" -1 | wc -m)
+    # echo 'debug 2: ' $DATE_SYMBOLS
+    local CONSOLE_WIDTH=$(($COLUMNS-$DATE_SYMBOLS-15)) # place for time, date and command number
+    # echo 'debug 3: ' $CONSOLE_WIDTH
+
+    # create line
+    while [ $CONSOLE_WIDTH -gt 0 ]
+    do
+        HORIZONT_2="${HORIZONT_2}-" # Unicode U+2015 "Horisontal bar"
+        CONSOLE_WIDTH=$(($CONSOLE_WIDTH-1))
+    done
+    # add time at the end
+    HORIZONT_2="${HORIZONT_2} \D{"${DATE_PATTERN}"} | command \#"
+}
 
 ##
 # Repository info for PS1
@@ -80,12 +97,14 @@ repo_info () {
 
 }
 
+
 ##
-# Init my variables
+# Init my variables for PS*
 #
 
 init_my_variables () {
-    horisont
+    horisont_1
+    horisont_2
     repo_info
 }
 
@@ -93,19 +112,32 @@ init_my_variables () {
 ##
 # PS1
 #
+get_previos_command_result () {
+    if [ $? -eq 0 ]
+    then
+        PREVIOUS_COMMAND_RESULT="completed"
+    else
+        PREVIOUS_COMMAND_RESULT="${RED}finished with error${COLOR_END}"
+    fi
+
+    echo $PREVIOUS_COMMAND_RESULT
+}
+
 init_my_variables
 PROMPT_COMMAND=init_my_variables
 
 USER_AND_HOST="[${YELLOW}\u${COLOR_END}${BLUE}@${COLOR_END}${TURQUOISE}\h${COLOR_END}]"
 CURRENT_DIR="${DARK_GRAY}\$(pwd)${COLOR_END}"
-PS1="${PURPLE_BG} completed ${COLOR_END}\n${GREEN}${HORIZONT}${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} ${REPO_INFO}\n🌌 "
+
+
+PS1="${PURPLE}--- $(get_previos_command_result). ${COLOR_END}\n${GREEN}${HORIZONT_1}${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} ${REPO_INFO}\n🌌 "
 
 
 ##
 # PS0
 #
 
-PS0="${PURPLE}command number: \# \n${HORIZONT}${COLOR_END}"
+PS0="${PURPLE}${HORIZONT_2}${COLOR_END}\n"
 
 
 # PS1="${GREEN}[\u@\h] \$(pwd) ============================================ [\t]${COLOR_END}\n🌌 "
@@ -120,8 +152,8 @@ PS0="${PURPLE}command number: \# \n${HORIZONT}${COLOR_END}"
 # Рефакторинг после прочтения книги.
 
 # debian_chroot
-# ls
 # iptables local :))))
+# statistics for apps which uses network!
 # top, df - welcome message
 
 ##
