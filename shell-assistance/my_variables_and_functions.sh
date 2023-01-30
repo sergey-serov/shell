@@ -48,10 +48,10 @@ PURPLE_BG='\e[45m'
 # Horizont line for PS1
 #
 
-horisont_1 () {  
+horisont_1 () {
 
     HORIZONT_1=
-    local CONSOLE_WIDTH=$(($COLUMNS)) # place for time
+    CONSOLE_WIDTH=$COLUMNS # reserve place for time? @TODO with time argument $1
 
     # create line
     while [ $CONSOLE_WIDTH -gt 0 ]
@@ -60,7 +60,7 @@ horisont_1 () {
         CONSOLE_WIDTH=$(($CONSOLE_WIDTH-1))
     done
 
-    # add time at the end
+    # add time at the end?
     HORIZONT_1="${HORIZONT_1}" #  [\t]
 
     # final
@@ -74,19 +74,19 @@ horisont_2 () {
 
     HORIZONT_2=
 
-    local DATE_PATTERN="%A | %d %B | %Y | %T | week %U"
-    local DATE_SYMBOLS=$(printf "%(${DATE_PATTERN})T" -1 | wc -m)
-    local CONSOLE_WIDTH=$(($COLUMNS-$DATE_SYMBOLS-15)) # place for time, date and command number
+    CURRENT_TIME=$(date +"%A | %d %B | %Y | %T | week %U")
+    TIME_LENGHT=$(echo $CURRENT_TIME | wc -m)
+    LINE_WIDTH=$(($COLUMNS-$TIME_LENGHT-15)) # place for time, date and command number
 
     # create line
-    while [ $CONSOLE_WIDTH -gt 0 ]
+    while [ $LINE_WIDTH -gt 0 ]
     do
-        HORIZONT_2="${HORIZONT_2}-" # Unicode U+2015 "Horisontal bar"
-        CONSOLE_WIDTH=$(($CONSOLE_WIDTH-1))
+        HORIZONT_2="${HORIZONT_2}-"
+        LINE_WIDTH=$(($LINE_WIDTH-1))
     done
 
     # add time at the end
-    HORIZONT_2="${HORIZONT_2} \D{"${DATE_PATTERN}"} | command \#"
+    HORIZONT_2="${HORIZONT_2} ${CURRENT_TIME}"
 
     # final
     echo -en $HORIZONT_2
@@ -133,10 +133,10 @@ repo_info () {
 # Init my variables for PS*
 #
 
-init_prompt_variables () {
-    horisont_1
-    horisont_2
-}
+# init_prompt_variables () {
+#     horisont_1
+#     horisont_2
+# }
 
 
 ##
@@ -149,7 +149,7 @@ print_previos_command_result () {
     then
         PREVIOUS_COMMAND_RESULT="completed"
     else
-        PREVIOUS_COMMAND_RESULT="${GREEN}finished with error${COLOR_END}"
+        PREVIOUS_COMMAND_RESULT="${GREEN}finished with error [ code: $? ]${COLOR_END}" # @todo code returns not correct
     fi
 
     echo -e $PREVIOUS_COMMAND_RESULT
@@ -157,7 +157,7 @@ print_previos_command_result () {
 
 ##
 # Set timer when command was run
-# @todo delete when exit from shell
+# @todo delete when exit from shell.
 
 set_timer () {
     local START=$(date +%s)
@@ -179,10 +179,9 @@ print_timer_result () {
 ##
 # Run before every prompt
 #
-# set +x
+
 # init_prompt_variables
 # PROMPT_COMMAND=init_prompt_variables
-# set -x
 
 ##
 # PS1
@@ -199,7 +198,7 @@ PS1="${PURPLE}--- \$(print_previos_command_result) at \$(print_timer_result) sec
 # PS0
 #
 
-PS0="${PURPLE}\$(horisont_2)${COLOR_END}\n\$(set_timer)"
+PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 
 
 # PS1="${GREEN}[\u@\h] \$(pwd) ============================================ [\t]${COLOR_END}\n🌌 "
@@ -235,5 +234,9 @@ PS0="${PURPLE}\$(horisont_2)${COLOR_END}\n\$(set_timer)"
     #  add green or red color TODO in cvs status
 
 update () {
-    sudo apt update && sudo apt upgrade
+    p "sudo apt update"
+    p "sudo apt upgrade"
 }
+
+
+
