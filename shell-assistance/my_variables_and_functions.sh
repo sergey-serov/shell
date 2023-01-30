@@ -1,5 +1,5 @@
 ##
-# Alias
+# Aliases
 #
 
 alias df='df -h'
@@ -27,6 +27,7 @@ BLUE='\e[34m'
 LIGHT_BLUE='\e[94m'
 PURPLE='\e[0;35m'
 MAGENTA='\e[35m'
+LIGHT_MAGENTA='\e[95m'
 TURQUOISE='\e[0;36m'
 WHITE='\e[0;37m'
 LIGHT_GRAY='\e[37m'
@@ -61,6 +62,9 @@ horisont_1 () {
 
     # add time at the end
     HORIZONT_1="${HORIZONT_1}" #  [\t]
+
+    # final
+    echo -en $HORIZONT_1
 }
 
 ##
@@ -83,6 +87,9 @@ horisont_2 () {
 
     # add time at the end
     HORIZONT_2="${HORIZONT_2} \D{"${DATE_PATTERN}"} | command \#"
+
+    # final
+    echo -en $HORIZONT_2
 }
 
 ##
@@ -127,36 +134,55 @@ repo_info () {
 #
 
 init_prompt_variables () {
-
-    # set +x
-
     horisont_1
     horisont_2
-
-    # set -x
 }
 
 
 ##
 # Is success or fail in previous command ?
 #
-get_previos_command_result () { # todo not works! always 0
-    if [ $? -eq 0 ]
+
+print_previos_command_result () {
+
+    if [ "$?" -eq 0 ]
     then
         PREVIOUS_COMMAND_RESULT="completed"
     else
-        PREVIOUS_COMMAND_RESULT="${RED}finished with error${COLOR_END}"
+        PREVIOUS_COMMAND_RESULT="${GREEN}finished with error${COLOR_END}"
     fi
 
-    echo $PREVIOUS_COMMAND_RESULT
+    echo -e $PREVIOUS_COMMAND_RESULT
+}
+
+##
+# Set timer when command was run
+# @todo delete when exit from shell
+
+set_timer () {
+    local START=$(date +%s)
+    echo -n $START > /tmp/console_command_timer
+}
+
+##
+# Print current timer value
+#
+
+print_timer_result () {
+    local START=$(cat /tmp/console_command_timer)
+    local END=$(date +%s)
+
+    TIMER_RESULT=$(($END-$START))
+    echo -e $TIMER_RESULT
 }
 
 ##
 # Run before every prompt
 #
-
-init_prompt_variables
-PROMPT_COMMAND=init_prompt_variables
+# set +x
+# init_prompt_variables
+# PROMPT_COMMAND=init_prompt_variables
+# set -x
 
 ##
 # PS1
@@ -166,14 +192,14 @@ USER_AND_HOST="[${YELLOW}\u${COLOR_END}${BLUE}@${COLOR_END}${TURQUOISE}\h${COLOR
 CURRENT_DIR="${DARK_GRAY}\$(pwd)${COLOR_END}"
 
 
-PS1="${PURPLE}--- $(get_previos_command_result). ${COLOR_END}\n${GREEN}${HORIZONT_1}${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} \$(repo_info)\n🌌 "
+PS1="${PURPLE}--- \$(print_previos_command_result) at \$(print_timer_result) seconds. ${COLOR_END}\n${GREEN}\$(horisont_1)${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} \$(repo_info)\n🌌 "
 
 
 ##
 # PS0
 #
 
-PS0="${PURPLE}${HORIZONT_2}${COLOR_END}\n\n"
+PS0="${PURPLE}\$(horisont_2)${COLOR_END}\n\$(set_timer)"
 
 
 # PS1="${GREEN}[\u@\h] \$(pwd) ============================================ [\t]${COLOR_END}\n🌌 "
@@ -208,3 +234,6 @@ PS0="${PURPLE}${HORIZONT_2}${COLOR_END}\n\n"
 
     #  add green or red color TODO in cvs status
 
+update () {
+    sudo apt update && sudo apt upgrade
+}
