@@ -1,4 +1,18 @@
 ##
+# Starts personal enviorement :)
+#
+
+# Load files with passwords, ports etc which are not goes into repo or anywere else.
+if [ -f $HOME/private_variables.sh ]
+then
+    chmod 600 $HOME/private_variables.sh
+    . $HOME/private_variables.sh
+else
+    echo File private_variables.sh not exists or accesseble for reading.
+fi
+
+
+##
 # Aliases
 #
 
@@ -8,9 +22,16 @@ alias du='du -sh'
 alias l='ls --group-directories-first -Fv'
 alias ll='ls --group-directories-first --human-readable -alFv'
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+##
+# Rewrite standard settings
+#
+
 HISTSIZE=1000000
 HISTFILESIZE=2000000
+
+##
+# Colors and text format
+#
 
 # colors for pretty output
 # http://misc.flogisoft.com/bash/tip_colors_and_formatting
@@ -213,7 +234,6 @@ PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 # Рефакторинг после прочтения книги.
 
 # debian_chroot
-# iptables local :))))
 # statistics for apps which uses network!
 # top, df - welcome message
 
