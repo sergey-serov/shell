@@ -5,29 +5,30 @@
 # DESCRIPTION
 #############
 
+# Print and run command.
+
+
 # HELP
 ######
+
+# $1 = command
+
 
 # CONFIG
 ########
 
-CURRENT_COMMAND=$1
+current_command=$1
 
 # PROGRAM
 #########
+
+echo '-----------'
+echo "[`date +"%T"`]: $current_command"
+$current_command
+
 
 # TODO
 ######
 
 # WAREHOUSE
 ###########
-
-# todo!!
-echo '-----------'
-echo "[`date +"%T"`]: $CURRENT_COMMAND"
-echo '-----------'
-$CURRENT_COMMAND
-
-
-
-
