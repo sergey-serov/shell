@@ -192,6 +192,7 @@ sudo ip6tables -L -n -v
 # TODO
 ######
 # add "for" loop?
+# add traceroute && ping
 
 
 # WAREHOUSE

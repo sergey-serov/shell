@@ -22,8 +22,8 @@ current_command=$1
 # PROGRAM
 #########
 
-echo '-----------'
-echo "[`date +"%T"`]: $current_command"
+echo -e "$YELLOW-----------$COLOR_END"
+echo -e "$YELLOW[`date +"%T"`]: $current_command $COLOR_END"
 $current_command
 
 

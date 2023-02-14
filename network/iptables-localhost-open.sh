@@ -67,8 +67,11 @@ ip6tables -A OUTPUT -o lo -j ACCEPT
 echo
 echo '---- IPv4 -----'
 echo
+
 iptables -L -n -v
+
 echo
 echo '---- IPv6 -----'
 echo
+
 ip6tables -L -n -v

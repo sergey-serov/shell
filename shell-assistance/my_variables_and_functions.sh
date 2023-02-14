@@ -1,5 +1,5 @@
 ##
-# Starts personal enviorement :)
+# Starts personal environment :)
 #
 
 # Load files with passwords, ports etc which are not goes into repo or anywere else.
@@ -35,34 +35,34 @@ HISTFILESIZE=2000000
 
 # colors for pretty output
 # http://misc.flogisoft.com/bash/tip_colors_and_formatting
-COLOR_END='\e[0m'
+export COLOR_END='\e[0m'
 
 # Text colors
-BLACK='\e[0;30m'
-RED='\e[0;31m'
-GREEN='\e[0;32m'
-LIGHT_GREEN='\e[92m'
-YELLOW='\e[0;33m'
-NAVY='\e[0;34m'
-BLUE='\e[34m'
-LIGHT_BLUE='\e[94m'
-PURPLE='\e[0;35m'
-MAGENTA='\e[35m'
-LIGHT_MAGENTA='\e[95m'
-TURQUOISE='\e[0;36m'
-WHITE='\e[0;37m'
-LIGHT_GRAY='\e[37m'
-DARK_GRAY='\e[90m'
+export BLACK='\e[0;30m'
+export RED='\e[0;31m'
+export GREEN='\e[0;32m'
+export LIGHT_GREEN='\e[92m'
+export YELLOW='\e[0;33m'
+export NAVY='\e[0;34m'
+export BLUE='\e[34m'
+export LIGHT_BLUE='\e[94m'
+export PURPLE='\e[0;35m'
+export MAGENTA='\e[35m'
+export LIGHT_MAGENTA='\e[95m'
+export TURQUOISE='\e[0;36m'
+export WHITE='\e[0;37m'
+export LIGHT_GRAY='\e[37m'
+export DARK_GRAY='\e[90m'
 ### echo -e "\e[38;5;82mHello \e[38;5;198mWorld"
 
 # Text format
-BOLD='\e[1m'
-UNDERLINED='\e[4m'
-BLINK='\e[5m'
+export BOLD='\e[1m'
+export UNDERLINED='\e[4m'
+export BLINK='\e[5m'
 
 # Background colors. REMEMBER: first must be text color, then background color.
-MAGENTA_BG='\e[45m'
-PURPLE_BG='\e[45m'
+export MAGENTA_BG='\e[45m'
+export PURPLE_BG='\e[45m'
 
 
 ##
@@ -190,11 +190,18 @@ set_timer () {
 #
 
 print_timer_result () {
+
+if [ -f /tmp/console_command_timer ]
+then
     local START=$(cat /tmp/console_command_timer)
     local END=$(date +%s)
 
     TIMER_RESULT=$(($END-$START))
-    echo -e $TIMER_RESULT
+    echo $TIMER_RESULT
+else
+    echo ' -- timer was not set already -- '
+fi
+
 }
 
 ##
@@ -254,9 +261,76 @@ PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
     #  add green or red color TODO in cvs status
 
 update () {
-    p "sudo apt update"
-    p "sudo apt upgrade"
+    run-command "sudo apt update"
+    run-command "sudo apt upgrade"
 }
+
+
+
+
+# ask confirmation
+# user codes must be beetween 64 and 113
+# http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
+ask_confirmation() {
+  TASK_NAME=$1
+
+  print_dialogue "Greetings, $USER."
+  print_dialogue "Do You really want to start $TASK_NAME? (y/n)"
+  read -e ANSWER
+
+  if [ $ANSWER = y ]; then
+    print_dialogue "Lets try! $TASK_NAME is starting..."
+  else
+    if [ $ANSWER = n ]; then
+      print_warning "This task was canceled."
+    else
+      print_warning "Sorry, Your answer was not recognized."
+    fi
+    exit 67
+  fi
+}
+
+# print computer dialog
+print_dialogue() {
+  QUESTION=$1
+  echo -en $BLUE
+  echo $QUESTION
+  echo -en $COLOR_END
+}
+
+# print warning
+print_warning() {
+  WARNING=$1
+  echo -en $YELLOW
+  echo $WARNING
+  echo -en $COLOR_END
+}
+
+# print error
+print_error() {
+  ERROR=$1
+  echo -en $RED
+  echo $ERROR
+  echo -en $COLOR_END
+}
+
+ws () {
+    run-command "sudo service apache2 start"
+    run-command "sudo service mysql start"
+}
+
+wi () {
+    run-command "sudo service apache2 status"
+    run-command "sudo service mysql status"
+}
+
+wf () {
+    run-command "sudo service apache2 stop"
+    run-command "sudo service mysql stop"
+}
+
+
+
 
 
 

@@ -28,8 +28,8 @@ action=$1
 # PROGRAM
 #########
 
-echo '-----------'
-echo "[`date +"%T"`]: $action"
+echo -e "$MAGENTA-----------$COLOR_END"
+echo -e "$MAGENTA[`date +"%T"`]: $action $COLOR_END"
 
 
 # TODO
