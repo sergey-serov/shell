@@ -66,8 +66,8 @@ sudo iptables -v -A INPUT -i $ethernet_adapter_name -p udp --sport 53 -j ACCEPT
 sudo iptables -v -A OUTPUT -o $ethernet_adapter_name -p udp --dport 53 -j ACCEPT
 
 # ssh my server
-sudo iptables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport $my_server_ssh_port -m state --state ESTABLISHED -j ACCEPT
-sudo iptables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport $my_server_ssh_port -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport $MY_SERVER_SSH_PORT -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport $MY_SERVER_SSH_PORT -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # ssh - other services
 sudo iptables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
@@ -136,8 +136,8 @@ sudo ip6tables -v -A INPUT -i $ethernet_adapter_name -p udp --sport 53 -j ACCEPT
 sudo ip6tables -v -A OUTPUT -o $ethernet_adapter_name -p udp --dport 53 -j ACCEPT
 
 # ssh my server
-sudo ip6tables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport $my_server_ssh_port -m state --state ESTABLISHED -j ACCEPT
-sudo ip6tables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport $my_server_ssh_port -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo ip6tables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport $MY_SERVER_SSH_PORT -m state --state ESTABLISHED -j ACCEPT
+sudo ip6tables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport $MY_SERVER_SSH_PORT -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # ssh - other services
 sudo ip6tables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
