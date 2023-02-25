@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# author: Sergey Serov
+
+# DESCRIPTION
+#############
+
+# Just print command.
+# It is useful when command is complex and standard 
+# function for printing and running command not works properly.
+
+
+# HELP
+######
+
+# $1 = command
+
+
+# CONFIG
+########
+
+command=$1
+
+
+# PROGRAM
+#########
+
+echo -e "$MAGENTA-----------$COLOR_END"
+echo -e "$MAGENTA[`date +"%T"`]: $command $COLOR_END"
+
+
+# TODO
+######
+
+# WAREHOUSE
+###########
