@@ -2,7 +2,9 @@
 # Starts personal environment :)
 #
 
+#
 # Load files with passwords, ports etc which are not goes into repo or anywere else.
+#
 if [ -f $HOME/private_variables.sh ]
 then
     chmod 600 $HOME/private_variables.sh
@@ -11,6 +13,22 @@ else
     echo File private_variables.sh not exists or accesseble for reading.
 fi
 
+#
+# Create my.cnf with private access credentials
+# Now when we run just 'mysql' (without -u and -p) - we works 
+# with root priviliges.
+# For work with other credetntials define -u -p -h params.
+#
+if [[ -n "$MYSQL_ADMIN" && -n "$MYSQL_PASSWORD" ]]
+then
+    echo "
+# mysql --print-defaults
+
+[mysql]
+    user=$MYSQL_ADMIN
+    password=$MYSQL_PASSWORD
+" > ~/.my.cnf
+fi
 
 ##
 # Aliases
@@ -171,7 +189,7 @@ print_previos_command_result () {
     then
         PREVIOUS_COMMAND_RESULT="completed"
     else
-        PREVIOUS_COMMAND_RESULT="${GREEN}finished with error [ code: $? ]${COLOR_END}" # @todo code returns not correct
+        PREVIOUS_COMMAND_RESULT="${RED}[!] finished with error [ code: $? ]${COLOR_END}" # @todo code returns not correct
     fi
 
     echo -e $PREVIOUS_COMMAND_RESULT
@@ -296,6 +314,8 @@ wf () {
     run-command "sudo service apache2 stop"
     run-command "sudo service mysql stop"
 }
+
+
 
 
 ##

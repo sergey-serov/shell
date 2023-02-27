@@ -18,7 +18,6 @@
 
 # CONFIG
 ########
-set -x
 database_name=$1
 database_user=$2
 database_user_password=$3
@@ -30,38 +29,34 @@ TASK_NAME="Creating new local mysql database"
 
 work-start "$TASK_NAME"
 
-query_1=`/usr/bin/mysql -u$MYSQL_ADMIN -p$MYSQL_PASSWORD<<SQL
+# Create database and user
+print-info "Trying to create database and user..."
+
+set -x
+echo "
 CREATE DATABASE $database_name;
 CREATE USER "$database_user"@"localhost" IDENTIFIED BY "$database_user_password";
 GRANT ALL PRIVILEGES ON $database_name.* TO "$database_user"@"localhost";
-FLUSH PRIVILEGES;
-quit
+FLUSH PRIVILEGES;" | mysql -t
+set +x
+
+# Check that database was created
+print-info "Trying to find just created new database..."
+
+# this is retro style for sql from bash
+query=`/usr/bin/mysql<<SQL
+SHOW DATABASES LIKE "$database_name";
 SQL`
 
-
-
-
-# If SQL error - this string will be not empty
-if [ -n "$query_1" ]
+if [ -n "$query" ]
 then
-    print-error $query_1
-else
-    print-info "Database '$database_name' was created for user '$database_user' with password '$database_user_password'"
+    print-info "Database '$database_name' exists."
 fi
 
-print-info "Now MySQL have these databases:"
+# Get list of all databases
+print-info "Trying to get list of all databases..."
 
-query_2=`/usr/bin/mysql -u$MYSQL_ADMIN -p$MYSQL_PASSWORD<<SQL
-SHOW DATABASES;
-quit
-SQL`
-
-if [ -n "$query_2" ]
-then
-    print-info $query_2
-else
-    print-error 'Can not get database list.'
-fi
+echo "SHOW DATABASES;" | mysql -t
 
 work-end-summary "$TASK_NAME"
 
@@ -71,6 +66,5 @@ work-end-summary "$TASK_NAME"
 
 # WAREHOUSE
 ###########
-set +x
 
 # CREATE USER 'username'@'host' IDENTIFIED WITH authentication_plugin BY 'password';
