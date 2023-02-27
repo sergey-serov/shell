@@ -71,21 +71,22 @@ export PURPLE_BG='\e[45m'
 
 horisont_1 () {
 
-    HORIZONT_1=
-    CONSOLE_WIDTH=$COLUMNS # reserve place for time? @TODO with time argument $1
+    horizont_1=''
+
+    console_width=$COLUMNS # reserve place for time? @TODO with time argument $1
 
     # create line
-    while [ $CONSOLE_WIDTH -gt 0 ]
+    while [ $console_width -gt 0 ]
     do
-        HORIZONT_1="${HORIZONT_1}―" # Unicode U+2015 "Horisontal bar"
-        CONSOLE_WIDTH=$(($CONSOLE_WIDTH-1))
+        horizont_1="${horizont_1}―" # Unicode U+2015 "Horisontal bar"
+        console_width=$(( $console_width - 1 ))
     done
 
     # add time at the end?
-    HORIZONT_1="${HORIZONT_1}" #  [\t]
+    horizont_1="${horizont_1}" #  [\t]
 
     # final
-    echo -en $HORIZONT_1
+    echo -en $horizont_1
 }
 
 ##
@@ -93,60 +94,60 @@ horisont_1 () {
 #
 horisont_2 () {
 
-    HORIZONT_2=
+    horizont_2=''
 
-    CURRENT_TIME=$(date +"%A | %d %B | %Y | %T | week %U")
-    TIME_LENGHT=$(echo $CURRENT_TIME | wc -m)
-    LINE_WIDTH=$(($COLUMNS-$TIME_LENGHT-15)) # place for time, date and command number
+    current_time=$(date +"%A | %d %B | %Y | %T | week %U")
+    time_lenght=$(echo $current_time | wc -m)
+    line_width=$(( $COLUMNS - $time_lenght - 15 )) # place for time, date and command number
 
     # create line
-    while [ $LINE_WIDTH -gt 0 ]
+    while [ $line_width -gt 0 ]
     do
-        HORIZONT_2="${HORIZONT_2}-"
-        LINE_WIDTH=$(($LINE_WIDTH-1))
+        horizont_2="${horizont_2}-"
+        line_width=$(( $line_width - 1 ))
     done
 
     # add time at the end
-    HORIZONT_2="${HORIZONT_2} ${CURRENT_TIME}"
+    horizont_2="${horizont_2} ${current_time}"
 
     # final
-    echo -en $HORIZONT_2
+    echo -en $horizont_2
 }
 
 ##
 # Repository info for PS1
 #
 
-repo_info () {
+get_repo_info () {
 
-    IS_REPO=
-    REPO_INFO=
-    REPO_DESCRIPTION=
+    is_repo=''
+    repo_info=''
+    repo_description=''
 
     # branch
-    IS_REPO=$(__git_ps1)
-    if [ -n "$IS_REPO" ]
+    is_repo=$(__git_ps1)
+    if [ -n "$is_repo" ]
     then 
-        REPO_INFO=$BLUE$IS_REPO$COLOR_END
+        repo_info=$BLUE$is_repo$COLOR_END
     fi
 
     # repo description
     if [[ -d .git && -f .git/description ]]
     then
-        local REPO_DESCRIPTION=$(cat .git/description)
+        repo_description=$(cat .git/description)
     fi
   
-    if echo "$REPO_DESCRIPTION" | grep "Unnamed repository" > /dev/null
+    if echo "$repo_description" | grep "Unnamed repository" > /dev/null
     then
-        REPO_DESCRIPTION="${YELLOW} no description... ${COLOR_END}"
+        repo_description="${YELLOW} no description... ${COLOR_END}"
     else
-        REPO_DESCRIPTION="${TURQUOISE} ${REPO_DESCRIPTION} ${COLOR_END}"
+        repo_description="${TURQUOISE} ${repo_description} ${COLOR_END}"
     fi
 
     # final
-    REPO_INFO="${REPO_INFO} ${REPO_DESCRIPTION}"
+    repo_info="${repo_info} ${repo_description}"
 
-    echo -en $REPO_INFO
+    echo -en $repo_info
 }
 
 
@@ -166,7 +167,7 @@ repo_info () {
 
 print_previos_command_result () {
 
-    if [ "$?" -eq 0 ]
+    if [ $? -eq 0 ]
     then
         PREVIOUS_COMMAND_RESULT="completed"
     else
@@ -188,20 +189,20 @@ set_timer () {
 ##
 # Print current timer value
 #
-
 print_timer_result () {
+    # todo !! add uniq id for every console in file name - 
+    # otherwise timer not correct because two consals will be 
+    # use one timer start point.
+    if [ -f /tmp/console_command_timer ] 
+    then
+        local start=$(cat /tmp/console_command_timer)
+        local end=$(date +%s)
 
-if [ -f /tmp/console_command_timer ]
-then
-    local START=$(cat /tmp/console_command_timer)
-    local END=$(date +%s)
-
-    TIMER_RESULT=$(($END-$START))
-    echo $TIMER_RESULT
-else
-    echo ' -- timer was not set already -- '
-fi
-
+        timer_result=$(( $end - $start ))
+        echo $timer_result
+    else
+        echo ' -- timer was not set already -- '
+    fi
 }
 
 ##
@@ -218,9 +219,7 @@ fi
 USER_AND_HOST="[${YELLOW}\u${COLOR_END}${BLUE}@${COLOR_END}${TURQUOISE}\h${COLOR_END}]"
 CURRENT_DIR="${DARK_GRAY}\$(pwd)${COLOR_END}"
 
-
-PS1="${PURPLE}--- \$(print_previos_command_result) at \$(print_timer_result) seconds. ${COLOR_END}\n${GREEN}\$(horisont_1)${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} \$(repo_info)\n🌌 "
-
+PS1="${PURPLE}--- \$(print_previos_command_result) at \$(print_timer_result) seconds. ${COLOR_END}\n${GREEN}\$(horisont_1)${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} \$(get_repo_info)\n🌌 "
 
 ##
 # PS0
@@ -233,6 +232,71 @@ PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 # output example:
 # [sergey@castle]  /home/sergey/Forge/shell ============================================ [15:30:23]
 # 🌌 
+
+#  add green or red color TODO in cvs status
+
+# ask confirmation
+# user codes must be beetween 64 and 113
+# http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
+ask_confirmation () {
+  TASK_NAME=$1
+
+  print_dialogue "Greetings, $USER."
+  print_dialogue "Do You really want to start $TASK_NAME? (y/n)"
+  read -e ANSWER
+
+  if [ $ANSWER = y ]; then
+    print_dialogue "Lets try! $TASK_NAME is starting..."
+  else
+    if [ $ANSWER = n ]; then
+      print_warning "This task was canceled."
+    else
+      print_warning "Sorry, Your answer was not recognized."
+    fi
+    exit 67
+  fi
+}
+
+# print computer dialog
+print_dialogue () {
+  QUESTION=$1
+  echo -en $BLUE
+  echo $QUESTION
+  echo -en $COLOR_END
+}
+
+# print warning
+print_warning () {
+  WARNING=$1
+  echo -en $YELLOW
+  echo $WARNING
+  echo -en $COLOR_END
+}
+
+##
+# Useful programs for 
+#
+
+update () {
+    run-command "sudo apt update"
+    run-command "sudo apt upgrade"
+}
+
+ws () {
+    run-command "sudo service apache2 start"
+    run-command "sudo service mysql start"
+}
+
+wi () {
+    run-command "sudo service apache2 status"
+    run-command "sudo service mysql status"
+}
+
+wf () {
+    run-command "sudo service apache2 stop"
+    run-command "sudo service mysql stop"
+}
+
 
 ##
 # TODO
@@ -256,81 +320,6 @@ PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 # # repo: $REPO_INFO
 # > "
 # 💐🌳
-
-
-    #  add green or red color TODO in cvs status
-
-update () {
-    run-command "sudo apt update"
-    run-command "sudo apt upgrade"
-}
-
-
-
-
-# ask confirmation
-# user codes must be beetween 64 and 113
-# http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
-ask_confirmation() {
-  TASK_NAME=$1
-
-  print_dialogue "Greetings, $USER."
-  print_dialogue "Do You really want to start $TASK_NAME? (y/n)"
-  read -e ANSWER
-
-  if [ $ANSWER = y ]; then
-    print_dialogue "Lets try! $TASK_NAME is starting..."
-  else
-    if [ $ANSWER = n ]; then
-      print_warning "This task was canceled."
-    else
-      print_warning "Sorry, Your answer was not recognized."
-    fi
-    exit 67
-  fi
-}
-
-# print computer dialog
-print_dialogue() {
-  QUESTION=$1
-  echo -en $BLUE
-  echo $QUESTION
-  echo -en $COLOR_END
-}
-
-# print warning
-print_warning() {
-  WARNING=$1
-  echo -en $YELLOW
-  echo $WARNING
-  echo -en $COLOR_END
-}
-
-# print error
-print_error() {
-  ERROR=$1
-  echo -en $RED
-  echo $ERROR
-  echo -en $COLOR_END
-}
-
-ws () {
-    run-command "sudo service apache2 start"
-    run-command "sudo service mysql start"
-}
-
-wi () {
-    run-command "sudo service apache2 status"
-    run-command "sudo service mysql status"
-}
-
-wf () {
-    run-command "sudo service apache2 stop"
-    run-command "sudo service mysql stop"
-}
-
-
-
 
 
 
