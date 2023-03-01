@@ -6,7 +6,7 @@
 #############
 
 # Restore MySQL database from file.
-# Database will be droped and created before restoring.
+# Attention! Database will be droped and created before restoring.
 
 
 # HELP
@@ -36,8 +36,7 @@ CREATE DATABASE $database_name;
 " | mysql
 set +x
 
-# print-command "mysql $database_name < $database_name.sql"
-
+print-command "mysql $database_name < $database_name.sql"
 mysql $database_name < $database_name.sql
 
 work-end-summary "$TASK_NAME"

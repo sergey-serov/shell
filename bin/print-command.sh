@@ -5,9 +5,9 @@
 # DESCRIPTION
 #############
 
-# Just print command.
-# It is useful when command is complex and standard 
-# function for printing and running command not works properly.
+# Just print command that will be run after.
+# It is useful when command is complex with stream redirections 
+# and standard function for printing and running command not works properly.
 
 
 # HELP

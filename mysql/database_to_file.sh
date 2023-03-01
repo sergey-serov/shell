@@ -28,8 +28,7 @@ TASK_NAME="Dumping database $database_name to file"
 
 work-start "$TASK_NAME"
 
-# print-command "mysqldump $database_name > $database_name.sql"
-
+print-command "mysqldump $database_name > $database_name.sql"
 mysqldump $database_name > $database_name.sql
 
 work-end-summary "$TASK_NAME"

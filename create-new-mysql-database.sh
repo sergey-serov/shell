@@ -35,8 +35,8 @@ print-info "Trying to create database and user..."
 set -x
 echo "
 CREATE DATABASE $database_name;
-CREATE USER "$database_user"@"localhost" IDENTIFIED BY "$database_user_password";
-GRANT ALL PRIVILEGES ON $database_name.* TO "$database_user"@"localhost";
+CREATE USER '$database_user'@'localhost' IDENTIFIED BY '$database_user_password';
+GRANT ALL PRIVILEGES ON $database_name.* TO '$database_user'@'localhost';
 FLUSH PRIVILEGES;" | mysql -t
 set +x
 
