@@ -43,9 +43,10 @@ set +x
 # Check that database was created
 print-info "Trying to find just created new database..."
 
-# this is retro style for sql from bash
+# this is retro style for sql query from bash
 query=`/usr/bin/mysql<<SQL
 SHOW DATABASES LIKE "$database_name";
+quit
 SQL`
 
 if [ -n "$query" ]
@@ -56,7 +57,7 @@ fi
 # Get list of all databases
 print-info "Trying to get list of all databases..."
 
-echo "SHOW DATABASES;" | mysql -t
+mysql -e "SHOW DATABASES;"
 
 work-end-summary "$TASK_NAME"
 

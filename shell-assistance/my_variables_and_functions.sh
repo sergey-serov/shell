@@ -27,6 +27,9 @@ then
 [mysql]
     user=$MYSQL_ADMIN
     password=$MYSQL_PASSWORD
+[mysqldump]
+    user=$MYSQL_ADMIN
+    password=$MYSQL_PASSWORD
 " > ~/.my.cnf
 fi
 
