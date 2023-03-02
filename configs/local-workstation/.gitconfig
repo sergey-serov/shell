@@ -1,3 +1,9 @@
 [user]
 	email = me@sergey-serov.ru
 	name = Sergey Serov
+	signingkey = 377D3A4762AB588A
+
+#
+#[commit]
+#	gpgsign = true
+#
