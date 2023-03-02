@@ -38,7 +38,7 @@ run-command "sudo chmod 755 $virtual_host_path/tmp $virtual_host_path/sessions $
 run-command "sudo chown -R sergey:sergey $virtual_host_path/www"
 run-command "sudo chown -R www-data:www-data $virtual_host_path/sessions $virtual_host_path/logs $virtual_host_path/tmp"
 
-print-action "Create new Apache config - /etc/apache2/sites-available/$virtual_host_name.conf"
+print-info "Create new Apache config - /etc/apache2/sites-available/$virtual_host_name.conf"
 
 echo "<VirtualHost *:80>
 
@@ -63,7 +63,7 @@ echo "<VirtualHost *:80>
 
 </VirtualHost>" | sudo tee /etc/apache2/sites-available/$virtual_host_name.conf
 
-print-action "echo \"127.0.0.1 $virtual_host_name www.$virtual_host_name\" | sudo tee --append /etc/hosts"
+print-command "echo \"127.0.0.1 $virtual_host_name www.$virtual_host_name\" | sudo tee --append /etc/hosts"
 
 echo "127.0.0.1 $virtual_host_name www.$virtual_host_name" | sudo tee --append /etc/hosts
 
@@ -77,6 +77,11 @@ work-end-summary "$TASK_NAME"
 ######
 
 # check that two arguments were passed here. + permissions!
+
+# global web root? /var/www/
+# create virtual_host_path to
+# cd there
+# combine mkdir chmod with &&
 
 # WAREHOUSE
 ###########
