@@ -13,21 +13,37 @@
 ######
 
 # $1 = Database name
+# $2 = File name
 
-# Example: 
+# Exit codes:
+# 1 - not correct number of parameters
+# 2 - file not exist
 
+# Example: ./database_from_file.sh forge /tmp/morning.sql
 
 # CONFIG
 ########
 database_name=$1
+file_name=$2
 
-TASK_NAME="Restoring data from file to database $database_name"
+TASK_NAME="Restoring data from file $file_name to database $database_name"
 
 
 # PROGRAM
 #########
 
 work-start "$TASK_NAME"
+
+if [ $# -ne 2 ]
+then
+    print-error "Must be 2 parameters."
+    print-info "Example: database_from_file.sh forge /tmp/morning.sql"
+    exit 1
+elif [ ! -f $file_name ]
+then
+    print-error "File $file_name not exists"
+    exit 2
+fi
 
 set -x
 echo "
@@ -36,8 +52,8 @@ CREATE DATABASE $database_name;
 " | mysql
 set +x
 
-print-command "mysql $database_name < $database_name.sql"
-mysql $database_name < $database_name.sql
+print-command "mysql $database_name < $file_name"
+mysql $database_name < $file_name
 
 work-end-summary "$TASK_NAME"
 

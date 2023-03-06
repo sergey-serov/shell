@@ -12,15 +12,21 @@
 ######
 
 # $1 = Database name
+# $2 = File name
 
-# Example: 
+# Exit codes:
+# 1 - not correct number of parameters
+# 2 - file exist and must be kept TODO
+
+# Example: ./database_to_file.sh forge /tmp/init.sql
 
 
 # CONFIG
 ########
 database_name=$1
+file_name=$2
 
-TASK_NAME="Dumping database $database_name to file"
+TASK_NAME="Dumping database $database_name to file $file_name"
 
 
 # PROGRAM
@@ -28,8 +34,18 @@ TASK_NAME="Dumping database $database_name to file"
 
 work-start "$TASK_NAME"
 
-print-command "mysqldump $database_name > $database_name.sql"
-mysqldump $database_name > $database_name.sql
+if [ $# -ne 2 ]
+then
+    print-error "Must be 2 parameters."
+    print-info "Example: database_to_file.sh forge /tmp/everning.sql"
+    exit 1
+elif [ -f $file_name ]  # TODO add read + if file exist -> rewrite y/n
+then
+    print-warning "File $file_name already exists and will be overwrite."
+fi
+
+print-command "mysqldump $database_name > $file_name"
+mysqldump $database_name > $file_name
 
 work-end-summary "$TASK_NAME"
 
