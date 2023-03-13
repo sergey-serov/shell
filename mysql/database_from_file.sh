@@ -36,7 +36,7 @@ work-start "$TASK_NAME"
 
 if [ $# -ne 2 ]
 then
-    print-error "Must be 2 parameters."
+    print-error "Must be 2 parameters: database-name file-name"
     print-info "Example: database_from_file.sh forge /tmp/morning.sql"
     exit 1
 elif [ ! -f $file_name ]

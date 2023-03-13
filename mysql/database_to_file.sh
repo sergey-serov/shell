@@ -16,7 +16,7 @@
 
 # Exit codes:
 # 1 - not correct number of parameters
-# 2 - file exist and must be kept TODO
+# 2 - file exist and must be kept
 
 # Example: ./database_to_file.sh forge /tmp/init.sql
 
@@ -39,9 +39,15 @@ then
     print-error "Must be 2 parameters."
     print-info "Example: database_to_file.sh forge /tmp/everning.sql"
     exit 1
-elif [ -f $file_name ]  # TODO add read + if file exist -> rewrite y/n
+elif [ -f $file_name ]  # if file exist --> rewrite y/n ?
 then
-    print-warning "File $file_name already exists and will be overwrite."
+    print-warning "File $file_name already exists."
+    print-warning "Overwrite it (y/n) ?"
+    read answer
+    if [ "$answer" != y ]
+    then
+        exit 2
+    fi
 fi
 
 print-command "mysqldump $database_name > $file_name"
