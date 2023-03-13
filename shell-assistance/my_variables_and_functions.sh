@@ -89,111 +89,103 @@ export BLINK='\e[5m'
 # Horizont line for PS1
 #
 
-horisont_1 () {
+print_horizont_1 () {
 
     horizont_1=''
-
-    console_width=$COLUMNS # reserve place for time? @TODO with time argument $1
+    console_width=$COLUMNS
 
     # create line
     while [ $console_width -gt 0 ]
     do
-        horizont_1="${horizont_1}―" # Unicode U+2015 "Horisontal bar"
-        console_width=$(( $console_width - 1 ))
+        horizont_1="$horizont_1―" # Unicode U+2015 "Horisontal bar"
+        console_width=$(( console_width - 1 ))
     done
-
-    # add time at the end?
-    horizont_1="${horizont_1}" #  [\t]
 
     # final
     echo -en $horizont_1
 }
 
+# export HORIZONT_1=$(print_horisont_1) # problem: not changes width after resize.
+
 ##
 # Horizont line for PS0
 #
-horisont_2 () {
+print_horizont_2 () {
 
     horizont_2=''
+    line_width=$COLUMNS
 
     current_time=$(date +"%A | %d %B | %Y | %T | week %U")
     time_lenght=$(echo $current_time | wc -m)
-    line_width=$(( $COLUMNS - $time_lenght - 15 )) # place for time, date and command number
+    line_width=$(( COLUMNS - time_lenght - 15 )) # place for time, date and command number
 
     # create line
     while [ $line_width -gt 0 ]
     do
-        horizont_2="${horizont_2}-"
-        line_width=$(( $line_width - 1 ))
+        horizont_2="$horizont_2-"
+        line_width=$(( line_width - 1 ))
     done
 
     # add time at the end
-    horizont_2="${horizont_2} ${current_time}"
+    horizont_2="$horizont_2 $current_time"
 
     # final
     echo -en $horizont_2
 }
 
+# export HORIZONT_2=$(print_horizont_2) # problem: not changes width after resize.
+
 ##
 # Repository info for PS1
 #
+#  @TODO add green or red color in vcs status
+print_repo_info () {
 
-get_repo_info () {
-
-    is_repo=''
+    branch=''
     repo_info=''
     repo_description=''
 
     # branch
-    is_repo=$(__git_ps1)
-    if [ -n "$is_repo" ]
+    branch=$(__git_ps1)
+    if [ -n "$branch" ]
     then 
-        repo_info=$BLUE$is_repo$COLOR_END
+        repo_info="$BLUE $branch $COLOR_END"
+
+    else # this is not a vcs repository
+        exit 0
     fi
 
     # repo description
-    if [ -d .git -a -f .git/description ]
+    if [[ -e .git && -d .git && -f .git/description && -s .git/description ]]
     then
         repo_description=$(cat .git/description)
+        if echo "$repo_description" | grep "^Unnamed repository" > /dev/null
+        then
+            repo_description="$YELLOW no description... $COLOR_END"
+        else
+            repo_description="$TURQUOISE $repo_description $COLOR_END"
+        fi
     fi
   
-    if echo "$repo_description" | grep "Unnamed repository" > /dev/null
-    then
-        repo_description="${YELLOW} no description... ${COLOR_END}"
-    else
-        repo_description="${TURQUOISE} ${repo_description} ${COLOR_END}"
-    fi
-
     # final
-    repo_info="${repo_info} ${repo_description}"
+    repo_info="$repo_info $repo_description"
 
     echo -en $repo_info
 }
 
-
 ##
-# Init my variables for PS*
+# Is success or fail in previous command?
 #
 
-# init_prompt_variables () {
-#     horisont_1
-#     horisont_2
-# }
+print_previous_command_exit_code () {
 
+    exit_code=$?
 
-##
-# Is success or fail in previous command ?
-#
-
-print_previos_command_result () {
-
-    result=$?
-
-    if [ $result -eq 0 ]
+    if [ $exit_code -eq 0 ]
     then
         output="completed"
     else
-        output="${RED}[!] finished with error [ code: $result ]${COLOR_END}"
+        output="$RED [!] finished with error [ code: $exit_code ] $COLOR_END"
     fi
 
     echo -e $output
@@ -204,61 +196,49 @@ print_previos_command_result () {
 # @todo delete when exit from shell.
 
 set_timer () {
-    local START=$(date +%s)
-    echo -n $START > /tmp/console_command_timer_$$
+    start=$(date +%s)
+    echo -n $start > /tmp/console_command_timer_$$
 }
 
 ##
 # Print current timer value
 #
 print_timer_result () {
-    # todo !! add uniq id for every console in file name - 
-    # otherwise timer not correct because two consals will be 
-    # use one timer start point.
-    if [ -f /tmp/console_command_timer_$$ ] 
+    if [ -f /tmp/console_command_timer_$$ ]
     then
-        local start=$(cat /tmp/console_command_timer_$$)
-        local end=$(date +%s)
+        start=$(cat /tmp/console_command_timer_$$)
+        end=$(date +%s)
 
-        timer_result=$(( $end - $start ))
-        echo $timer_result
+        timer_result=$(( end - start ))
+        echo "$timer_result seconds."
     else
         echo ' -- timer was not set already -- '
     fi
 }
 
 ##
-# Run before every prompt
-#
-
-# init_prompt_variables
-# PROMPT_COMMAND=init_prompt_variables
-
-##
 # PS1
 #
 
-USER_AND_HOST="[${YELLOW}\u${COLOR_END}${BLUE}@${COLOR_END}${TURQUOISE}\h${COLOR_END}]"
-CURRENT_DIR="${DARK_GRAY}\$(pwd)${COLOR_END}"
+USER_AND_HOST="[$YELLOW\u$COLOR_END$BLUE@$COLOR_END$TURQUOISE\h$COLOR_END]"
+CURRENT_DIR="$DARK_GRAY\$(pwd)$COLOR_END"
+PREVIOUS_COMMAND_RESULT="$PURPLE--- \$(print_previous_command_exit_code) at \$(print_timer_result) $COLOR_END"
 
-PS1="${PURPLE}--- \$(print_previos_command_result) at \$(print_timer_result) seconds. ${COLOR_END}\n${GREEN}\$(horisont_1)${COLOR_END}\n${USER_AND_HOST} ${CURRENT_DIR} \$(get_repo_info)\n🌌 "
+PS1="$PREVIOUS_COMMAND_RESULT\n$GREEN\$(print_horizont_1)$COLOR_END\n$USER_AND_HOST $CURRENT_DIR \$(print_repo_info)\n🌌 "
 
 ##
 # PS0
 #
 
-PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
-
+PS0="${PURPLE}\$(print_horizont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 
 # PS1="${GREEN}[\u@\h] \$(pwd) ============================================ [\t]${COLOR_END}\n🌌 "
 # output example:
 # [sergey@castle]  /home/sergey/Forge/shell ============================================ [15:30:23]
 # 🌌 
 
-#  add green or red color TODO in cvs status
-
 ##
-# Useful programs for 
+# Useful programs for work
 #
 
 update () {
@@ -280,9 +260,6 @@ wf () {
     run-command "sudo service apache2 stop"
     run-command "sudo service mysql stop"
 }
-
-
-
 
 ##
 # TODO
@@ -307,5 +284,13 @@ wf () {
 # > "
 # 💐🌳
 
+# Run before every prompt
+# PROMPT_COMMAND=init_prompt_variables
+
+# Init my variables for PS*
+# init_prompt_variables () {
+#     print_horizont_1
+#     print_horizont_2
+# }
 
 
