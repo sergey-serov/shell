@@ -14,6 +14,9 @@
 # $2 = user name with access to all tables here
 # $3 = password
 
+# Exit codes:
+# 1 - not correct number of parameters
+
 # Example: ./create-new-mysql-database.sh forge blacksmith MightAndIron123
 
 # CONFIG
@@ -28,6 +31,13 @@ TASK_NAME="Creating new local mysql database"
 #########
 
 work-start "$TASK_NAME"
+
+if [ $# -ne 3 ]
+then
+    print-error "Must be 3 parameters: database-name user password"
+    print-info "Example: create-new-mysql-database.sh forge blacksmith MightAndIron123"
+    exit 1
+fi
 
 # Create database and user
 print-info "Trying to create database and user..."
