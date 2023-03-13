@@ -17,8 +17,8 @@ error="$*"
 #########
 
 echo -e "$RED-----------$COLOR_END"
-echo -e "$RED🔴 Error: $COLOR_END"
-echo -e "$RED[`date +"%T"`]: $error $COLOR_END"
+echo -e "$RED [!] [`date +"%T"`] Error: $COLOR_END"
+echo -e "$RED $error $COLOR_END"
 
 
 # TODO
@@ -26,5 +26,5 @@ echo -e "$RED[`date +"%T"`]: $error $COLOR_END"
 
 # WAREHOUSE
 ###########
-# 🐫
+# 🐫 🔴
 
