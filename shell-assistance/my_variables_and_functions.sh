@@ -19,7 +19,7 @@ fi
 # with root priviliges.
 # For work with other credetntials define -u -p -h params.
 #
-if [[ -n "$MYSQL_ADMIN" && -n "$MYSQL_PASSWORD" ]]
+if [ -n "$MYSQL_ADMIN" -a -n "$MYSQL_PASSWORD" ]
 then
     echo "
 # mysql --print-defaults
@@ -47,8 +47,7 @@ alias ll='ls --group-directories-first --human-readable -alFv'
 # Rewrite standard settings
 #
 
-HISTSIZE=1000000
-HISTFILESIZE=2000000
+HISTFILESIZE=all
 
 ##
 # Colors and text format
@@ -76,15 +75,15 @@ export LIGHT_GRAY='\e[37m'
 export DARK_GRAY='\e[90m'
 ### echo -e "\e[38;5;82mHello \e[38;5;198mWorld"
 
+# Background colors. ATTENSION: first must be text color, 
+# then background color or text format.
+export MAGENTA_BG='\e[45m'
+export PURPLE_BG='\e[45m'
+
 # Text format
 export BOLD='\e[1m'
 export UNDERLINED='\e[4m'
 export BLINK='\e[5m'
-
-# Background colors. REMEMBER: first must be text color, then background color.
-export MAGENTA_BG='\e[45m'
-export PURPLE_BG='\e[45m'
-
 
 ##
 # Horizont line for PS1
@@ -153,7 +152,7 @@ get_repo_info () {
     fi
 
     # repo description
-    if [[ -d .git && -f .git/description ]]
+    if [ -d .git -a -f .git/description ]
     then
         repo_description=$(cat .git/description)
     fi
@@ -188,14 +187,16 @@ get_repo_info () {
 
 print_previos_command_result () {
 
-    if [ $? -eq 0 ]
+    result=$?
+
+    if [ $result -eq 0 ]
     then
-        PREVIOUS_COMMAND_RESULT="completed"
+        output="completed"
     else
-        PREVIOUS_COMMAND_RESULT="${RED}[!] finished with error [ code: $? ]${COLOR_END}" # @todo code returns not correct
+        output="${RED}[!] finished with error [ code: $result ]${COLOR_END}"
     fi
 
-    echo -e $PREVIOUS_COMMAND_RESULT
+    echo -e $output
 }
 
 ##
@@ -204,7 +205,7 @@ print_previos_command_result () {
 
 set_timer () {
     local START=$(date +%s)
-    echo -n $START > /tmp/console_command_timer
+    echo -n $START > /tmp/console_command_timer_$$
 }
 
 ##
@@ -214,9 +215,9 @@ print_timer_result () {
     # todo !! add uniq id for every console in file name - 
     # otherwise timer not correct because two consals will be 
     # use one timer start point.
-    if [ -f /tmp/console_command_timer ] 
+    if [ -f /tmp/console_command_timer_$$ ] 
     then
-        local start=$(cat /tmp/console_command_timer)
+        local start=$(cat /tmp/console_command_timer_$$)
         local end=$(date +%s)
 
         timer_result=$(( $end - $start ))
@@ -255,44 +256,6 @@ PS0="${PURPLE}\$(horisont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 # 🌌 
 
 #  add green or red color TODO in cvs status
-
-# ask confirmation
-# user codes must be beetween 64 and 113
-# http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
-ask_confirmation () {
-  TASK_NAME=$1
-
-  print_dialogue "Greetings, $USER."
-  print_dialogue "Do You really want to start $TASK_NAME? (y/n)"
-  read -e ANSWER
-
-  if [ $ANSWER = y ]; then
-    print_dialogue "Lets try! $TASK_NAME is starting..."
-  else
-    if [ $ANSWER = n ]; then
-      print_warning "This task was canceled."
-    else
-      print_warning "Sorry, Your answer was not recognized."
-    fi
-    exit 67
-  fi
-}
-
-# print computer dialog
-print_dialogue () {
-  QUESTION=$1
-  echo -en $BLUE
-  echo $QUESTION
-  echo -en $COLOR_END
-}
-
-# print warning
-print_warning () {
-  WARNING=$1
-  echo -en $YELLOW
-  echo $WARNING
-  echo -en $COLOR_END
-}
 
 ##
 # Useful programs for 
