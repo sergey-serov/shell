@@ -15,7 +15,7 @@ fi
 
 #
 # Create my.cnf with private access credentials
-# Now when we run just 'mysql' (without -u and -p) - we works 
+# Now when we run just 'mysql' (without -u and -p) - we works
 # with root priviliges.
 # For work with other credetntials define -u -p -h params.
 #
@@ -75,7 +75,7 @@ export LIGHT_GRAY='\e[37m'
 export DARK_GRAY='\e[90m'
 ### echo -e "\e[38;5;82mHello \e[38;5;198mWorld"
 
-# Background colors. ATTENSION: first must be text color, 
+# Background colors. ATTENSION: first must be text color,
 # then background color or text format.
 export MAGENTA_BG='\e[45m'
 export PURPLE_BG='\e[45m'
@@ -148,7 +148,7 @@ print_repo_info () {
     # branch
     branch=$(__git_ps1)
     if [ -n "$branch" ]
-    then 
+    then
         repo_info="$BLUE $branch $COLOR_END"
 
     else # this is not a vcs repository
@@ -166,7 +166,7 @@ print_repo_info () {
             repo_description="$TURQUOISE $repo_description $COLOR_END"
         fi
     fi
-  
+
     # final
     repo_info="$repo_info $repo_description"
 
@@ -235,7 +235,14 @@ PS0="${PURPLE}\$(print_horizont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 # PS1="${GREEN}[\u@\h] \$(pwd) ============================================ [\t]${COLOR_END}\n🌌 "
 # output example:
 # [sergey@castle]  /home/sergey/Forge/shell ============================================ [15:30:23]
-# 🌌 
+# 🌌
+
+##
+# PS4 (debug mode with set -x)
+#
+# export PS4='+[line ${LINENO}]: }'
+# export PS4='+${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+export PS4='+ $(printf "%s %3d" line ${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 ##
 # Useful programs for work
