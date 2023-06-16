@@ -3,7 +3,8 @@
 	name = Sergey Serov
 	signingkey = 377D3A4762AB588A
 
-#
-#[commit]
-#	gpgsign = true
-#
+[commit]
+	gpgsign = true
+
+[init]
+	defaultBranch = main
