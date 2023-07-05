@@ -33,6 +33,9 @@ then
 " > ~/.my.cnf
 fi
 
+# todo iptables
+
+
 ##
 # Aliases
 #
@@ -42,6 +45,8 @@ alias du='du -sh'
 
 alias l='ls --group-directories-first -Fv'
 alias ll='ls --group-directories-first --human-readable -alFv'
+
+alias cp='cp -i'
 
 ##
 # Rewrite standard settings
@@ -245,6 +250,27 @@ PS0="${PURPLE}\$(print_horizont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 export PS4='+ $(printf "%s %3d" line ${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 ##
+# Greetings
+#
+# TODO add $(days) -- another name will be good maybe
+
+##
+# Messages from system
+#
+
+if test -s ~/.messages_from_system
+then
+    :
+    # TODO
+fi
+
+##
+# Goodbye
+#
+trap "echo 'import this' | python3; sleep 100; exit" 0
+
+
+##
 # Useful programs for work
 #
 
@@ -258,7 +284,7 @@ ws () {
     run-command "sudo service mysql start"
 }
 
-wi () {
+wi () { # todo: add parametr v for full output and by deafult short status message.
     run-command "sudo service apache2 status"
     run-command "sudo service mysql status"
 }
@@ -266,6 +292,11 @@ wi () {
 wf () {
     run-command "sudo service apache2 stop"
     run-command "sudo service mysql stop"
+}
+
+update_phpstorm_eap () {
+    run-command "rm -rfv /opt/phpstorm/*"
+    run-command "cp -rv /home/sergey/Downloads/PhpStorm/* /opt/phpstorm"
 }
 
 ##
