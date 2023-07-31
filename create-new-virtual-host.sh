@@ -13,19 +13,18 @@
 ######
 
 # $1 = virtual host name
-# Example: forge1.local
-
-# $2 = path to host root directory, must be created before.
-# Example: /var/www/forge1.local
+# Example: forge
 
 
 # CONFIG
 ########
+# set -x
+name=$1
 
-virtual_host_name=$1
-virtual_host_path=$2
+web_root='/var/www'
+path="$web_root/$name"
 
-TASK_NAME="Creating new local virtual host '$virtual_host_name'"
+TASK_NAME="Creating new local virtual host '$name'"
 
 
 # PROGRAM
@@ -33,42 +32,61 @@ TASK_NAME="Creating new local virtual host '$virtual_host_name'"
 
 work-start "$TASK_NAME"
 
-run-command "sudo mkdir $virtual_host_path/tmp $virtual_host_path/sessions $virtual_host_path/logs $virtual_host_path/www"
-run-command "sudo chmod 755 $virtual_host_path/tmp $virtual_host_path/sessions $virtual_host_path/logs"
-run-command "sudo chown -R sergey:sergey $virtual_host_path/www"
-run-command "sudo chown -R www-data:www-data $virtual_host_path/sessions $virtual_host_path/logs $virtual_host_path/tmp"
+if [ $# -ne 1 -o -z "$1" ]
+then
+    print-error "Must be 1 parameter - virtual host name."
+    print-info "Usage: ./create-new-virtual-host.sh forge"
+    print-warning "Exit..."
+    exit 1
+elif [ -d $path ]
+then
+    print-error "Directory for virtual host already exists!"
+    print-warning "Exit..."
+    exit 2
+fi
 
-print-info "Create new Apache config - /etc/apache2/sites-available/$virtual_host_name.conf"
+run-command "sudo mkdir $path"
+
+run-command "sudo mkdir -m=755 $path/logs"
+run-command "sudo mkdir -m=755 $path/sessions"
+run-command "sudo mkdir -m=755 $path/tmp"
+run-command "sudo mkdir -m=755 $path/www"
+
+run-command "sudo chown -v www-data:www-data $path/logs"
+run-command "sudo chown -v www-data:www-data $path/sessions"
+run-command "sudo chown -v www-data:www-data $path/tmp"
+run-command "sudo chown -v sergey:sergey $path/www"
+
+print-info "Create new Apache config - /etc/apache2/sites-available/$name.conf"
 
 echo "<VirtualHost *:80>
 
-  DocumentRoot $virtual_host_path/www
+  DocumentRoot $path/www
 
-  ServerName $virtual_host_name
-  ServerAlias www.$virtual_host_name
+  ServerName $name
+  ServerAlias www.$name
 
-  ErrorLog $virtual_host_path/logs/apache_error.log
+  ErrorLog $path/logs/apache_error.log
 
-  <Directory $virtual_host_path/www>
+  <Directory $path/www>
     Options -Indexes
     AllowOverride All
     Require all granted
   </Directory>
 
-  php_admin_value open_basedir $virtual_host_path/www:$virtual_host_path/tmp
-  php_admin_value doc_root $virtual_host_path/www
-  php_admin_value upload_tmp_dir $virtual_host_path/tmp
-  php_admin_value error_log $virtual_host_path/logs/php.log
-  php_admin_value session.save_path $virtual_host_path/sessions
+  php_admin_value open_basedir $path/www:$path/tmp
+  php_admin_value doc_root $path/www
+  php_admin_value upload_tmp_dir $path/tmp
+  php_admin_value error_log $path/logs/php.log
+  php_admin_value session.save_path $path/sessions
 
-</VirtualHost>" | sudo tee /etc/apache2/sites-available/$virtual_host_name.conf
+</VirtualHost>" | sudo tee /etc/apache2/sites-available/$name.conf
 
-print-command "echo \"127.0.0.1 $virtual_host_name www.$virtual_host_name\" | sudo tee --append /etc/hosts"
+print-command "echo \"127.0.0.1 $name www.$name\" | sudo tee --append /etc/hosts"
 
-echo "127.0.0.1 $virtual_host_name www.$virtual_host_name" | sudo tee --append /etc/hosts
+echo "127.0.0.1 $name www.$name" | sudo tee --append /etc/hosts
 
-run-command "cd /etc/apache2/sites-available"
-run-command "sudo a2ensite $virtual_host_name.conf"
+run-command "sudo a2ensite $name.conf"
 run-command "sudo service apache2 restart"
 
 work-end-summary "$TASK_NAME"
@@ -77,11 +95,12 @@ work-end-summary "$TASK_NAME"
 ######
 
 # check that two arguments were passed here. + permissions!
-
-# global web root? /var/www/
-# create virtual_host_path to
-# cd there
-# combine mkdir chmod with &&
+# output table: all current virtual host + /etc/hosts
+# + Apache available/enabled sites
+# + du
 
 # WAREHOUSE
 ###########
+
+# fc -s tmp=sessions mkdir # works!
+set +x
