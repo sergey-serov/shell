@@ -296,23 +296,51 @@ wf () {
 
 update_phpstorm_eap () {
     run-command "rm -rfv /opt/phpstorm/*"
-    run-command "cp -rv /home/sergey/Downloads/PhpStorm/* /opt/phpstorm"
+    run-command "cp -rv $HOME/Downloads/PhpStorm/* /opt/phpstorm"
+}
+
+
+currently () {
+    print-info "Make backup."
+    print-info "1). Database."
+
+    copy_name=$(date +"%F_%H-%M")
+    run-command "$SHELL_HOME/mysql/database_to_file.sh $CURRENTLY_DATABASE $BACKUP_HOME/$copy_name.sql"
+
+    print-info "2). Files."
+    run-command "tar -czf $BACKUP_HOME/$copy_name.gz $CURRENTLY_SITE"
+
+    print-info "Used space:"
+    run-command "du $BACKUP_HOME"
+
+    print-info "Free space:"
+    run-command "df $HOME" # todo add new function + in welcome message
+
+    print-info "Version control routine."
+    print-command "cd $CURRENTLY_CODE"
+    cd $CURRENTLY_CODE
+
+    run-command "git status"
 }
 
 ##
 # TODO
 #
 
-# Рефакторинг после прочтения книги.
+# small hight beuty sound in PS finish.
 
 # debian_chroot
 # statistics for apps which uses network!
 # top, df - welcome message
 
+# !!!!!!!!!!!!!!!!!!!!!
+# backup /var/www every morning before work!
+# dump all databases before work at the mornign!
+
 ##
 # Warehouse
 #
-
+# Kat Dog
 # PS1="$HORIZONT
 # # time: \t
 # # user: \u
