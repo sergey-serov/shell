@@ -1,0 +1,24 @@
+# Create new Apache config - /etc/apache2/sites-available/$name.conf
+
+<VirtualHost *:80>
+
+  DocumentRoot $path/www
+
+  ServerName $name
+  ServerAlias www.$name
+
+  ErrorLog $path/logs/apache_error.log
+
+  <Directory $path/www>
+    Options -Indexes
+    AllowOverride All
+    Require all granted
+  </Directory>
+
+  php_admin_value open_basedir $path/www:$path/tmp
+  php_admin_value doc_root $path/www
+  php_admin_value upload_tmp_dir $path/tmp
+  php_admin_value error_log $path/logs/php.log
+  php_admin_value session.save_path $path/sessions
+
+</VirtualHost>
