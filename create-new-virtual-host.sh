@@ -98,9 +98,16 @@ work-end-summary "$TASK_NAME"
 # output table: all current virtual host + /etc/hosts
 # + Apache available/enabled sites
 # + du
+# ?+ touch index.html ++ echo 'this is ' $host_name
+# + curl -I this new host
 
 # WAREHOUSE
 ###########
 
-# fc -s tmp=sessions mkdir # works!
+#!/bin/bash -i
+# sudo mkdir -v -m=755 $path/logs
+# fc -s logs=sessions
+# fc -s sessions=tmp
+# fc -s tmp=www
+
 set +x

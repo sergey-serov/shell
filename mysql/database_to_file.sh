@@ -58,6 +58,7 @@ work-end-summary "$TASK_NAME"
 
 # TODO
 ######
+# add du, file, ll at the end of task,.
 
 # WAREHOUSE
 ###########

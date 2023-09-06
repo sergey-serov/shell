@@ -75,6 +75,11 @@ work-end-summary "$TASK_NAME"
 # TODO
 ######
 
+# # Get list of all users
+# print-info "Trying to get list of all users..."
+
+# mysql -e "SHOW DATABASES;"
+
 # WAREHOUSE
 ###########
 
