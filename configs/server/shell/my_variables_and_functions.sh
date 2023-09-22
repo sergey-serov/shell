@@ -75,16 +75,20 @@ update () {
 }
 
 ws () {
+    run-command "sudo service nginx start"
     run-command "sudo service apache2 start"
     run-command "sudo service mysql start"
 }
 
 wi () { # todo: add parametr v for full output and by deafult short status message.
+    run-command "sudo service nginx status"
     run-command "sudo service apache2 status"
     run-command "sudo service mysql status"
 }
 
 wf () {
+    run-command "sudo service nginx stop"
     run-command "sudo service apache2 stop"
     run-command "sudo service mysql stop"
 }
+
