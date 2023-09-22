@@ -1,0 +1,8 @@
+
+>>> standard .bashrc file <<<
+
+##
+# My settings
+#
+
+. /home/sergey/shell/shell-assistance/my_variables_and_functions.sh
