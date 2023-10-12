@@ -1,0 +1,6 @@
+LogLevel VERBOSE
+LoginGraceTime 5
+PermitRootLogin no
+MaxAuthTries 3
+PermitEmptyPasswords no
+PermitEmptyPasswords no
