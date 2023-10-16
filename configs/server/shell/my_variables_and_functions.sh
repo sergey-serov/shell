@@ -92,3 +92,6 @@ wf () {
     run-command "sudo service mysql stop"
 }
 
+myn () {
+    watch -n 1 "ss | grep -e ':tcp' -e ':ssh'"
+}

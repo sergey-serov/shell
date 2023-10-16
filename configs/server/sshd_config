@@ -1,6 +1,6 @@
+Port 2022
 LogLevel VERBOSE
 LoginGraceTime 5
-PermitRootLogin no
 MaxAuthTries 3
-PermitEmptyPasswords no
+PermitRootLogin no
 PermitEmptyPasswords no
