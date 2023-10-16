@@ -1,0 +1,14 @@
+/install.php
+/xmlrpc.php
+CHANGELOG.txt
+composer.json
+INSTALL.mysql.txt
+INSTALL.pgsql.txt
+INSTALL.sqlite.txt
+INSTALL.txt
+MAINTAINERS.txt
+README.txt
+README.md
+UPGRADE.txt
+UPDATE.txt
+USAGE.txt
