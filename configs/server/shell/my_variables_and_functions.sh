@@ -93,5 +93,5 @@ wf () {
 }
 
 myn () {
-    watch -n 1 "ss | grep -e ':tcp' -e ':ssh'"
+    watch -n 1 "ss | grep -e ':http' -e ':ssh'"
 }

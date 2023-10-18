@@ -1,4 +1,4 @@
-Port 2022
+Port $MY_SERVER_SSH_PORT
 LogLevel VERBOSE
 LoginGraceTime 5
 MaxAuthTries 3
