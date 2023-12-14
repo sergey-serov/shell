@@ -35,7 +35,6 @@ fi
 
 # todo iptables
 
-
 ##
 # Aliases
 #
@@ -269,6 +268,15 @@ fi
 #
 trap "echo 'import this' | python3; sleep 100; exit" 0
 
+### Shell setings end
+
+##
+# RUSTUP settings
+#
+. "$HOME/.cargo/env"
+export RUST_BACKTRACE=1
+# export RUST_BACKTRACE=full
+
 
 ##
 # Useful programs for work
@@ -277,6 +285,7 @@ trap "echo 'import this' | python3; sleep 100; exit" 0
 update () {
     run-command "sudo apt update"
     run-command "sudo apt upgrade"
+    run-command "rustup update"
 }
 
 ws () {
@@ -299,6 +308,14 @@ update_phpstorm_eap () {
     run-command "cp -rv $HOME/Downloads/PhpStorm/* /opt/phpstorm"
 }
 
+cm () {
+    # todo improve!
+    run-command "git status"
+    run-command "git add -A"
+    run-command "git commit"
+    run-command "git push origin main"
+}
+
 
 currently () {
     print-info "Make backup."
@@ -308,7 +325,7 @@ currently () {
     run-command "$SHELL_HOME/mysql/database_to_file.sh $CURRENTLY_DATABASE $BACKUP_HOME/$copy_name.sql"
 
     print-info "2). Files."
-    run-command "tar -czf $BACKUP_HOME/$copy_name.gz $CURRENTLY_SITE"
+    run-command "tar -czf $BACKUP_HOME/$copy_name.gz $CURRENTLY_SITE_PATH"
 
     print-info "Used space:"
     run-command "du $BACKUP_HOME"
@@ -322,6 +339,7 @@ currently () {
 
     run-command "git status"
 }
+
 
 ##
 # TODO
