@@ -244,9 +244,10 @@ PS0="${PURPLE}\$(print_horizont_2) | command \# ${COLOR_END}\n\$(set_timer)"
 ##
 # PS4 (debug mode with set -x)
 #
+
 # export PS4='+[line ${LINENO}]: }'
-# export PS4='+${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
-export PS4='+ $(printf "%s %3d" line ${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+# export PS4="+ ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }"
+export PS4="+ \$(printf '%s %3d' line \${LINENO}): \${FUNCNAME[0]:+\${FUNCNAME[0]}: }"
 
 ##
 # Greetings
