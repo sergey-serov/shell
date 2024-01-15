@@ -95,3 +95,9 @@ wf () {
 myn () {
     watch -n 1 "ss | grep -e ':http' -e ':ssh'"
 }
+
+# TODO ?
+# before_site_update () {}
+# after_site_update () {}
+
+

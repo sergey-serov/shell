@@ -254,6 +254,9 @@ export PS4="+ \$(printf '%s %3d' line \${LINENO}): \${FUNCNAME[0]:+\${FUNCNAME[0
 #
 # TODO add $(days) -- another name will be good maybe
 
+# systemctl status systemd-timesyncd.service
+timedatectl timesync-status
+
 ##
 # Messages from system
 #

@@ -16,7 +16,7 @@
 
 # how to integrate with OS:
 # http://stackoverflow.com/questions/30818931/debian-8-iptables-persistent
-# 
+#
 # sudo apt-get install iptables-persistent
 # sudo dpkg-reconfigure iptables-persistent
 
@@ -69,7 +69,7 @@ sudo iptables -v -A OUTPUT -o $ethernet_adapter_name -p udp --dport 53 -j ACCEPT
 sudo iptables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport $MY_SERVER_SSH_PORT -m state --state ESTABLISHED -j ACCEPT
 sudo iptables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport $MY_SERVER_SSH_PORT -m state --state NEW,ESTABLISHED -j ACCEPT
 
-# ssh - other services
+# ssh standard port
 sudo iptables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 sudo iptables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
@@ -139,7 +139,7 @@ sudo ip6tables -v -A OUTPUT -o $ethernet_adapter_name -p udp --dport 53 -j ACCEP
 sudo ip6tables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport $MY_SERVER_SSH_PORT -m state --state ESTABLISHED -j ACCEPT
 sudo ip6tables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport $MY_SERVER_SSH_PORT -m state --state NEW,ESTABLISHED -j ACCEPT
 
-# ssh - other services
+# ssh standard port
 sudo ip6tables -v -A INPUT -i $ethernet_adapter_name -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 sudo ip6tables -v -A OUTPUT -o $ethernet_adapter_name -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
