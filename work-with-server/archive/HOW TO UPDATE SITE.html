@@ -1,0 +1,25 @@
+HOW TO UPDATE SITE
+------------------
+
+update only files
+-----------------
+
+# Connect to server and run preparation script - before-update.sh
+Remove recursivly attribute 'i' from site documents directory
+Copy file maintenance.html to 'www' directory
+rm -rf tmp/* sessions/*
+
+# Update with rsync remote site - upload_site.sh
+
+# Update database if $3 (databe name) exist - copy_from_local.sh
+
+# Connect to server and run final script - after-update.sh
+Run correct-file-attributes.sh - correct file owner, permissions, selinux context.
+Remove file maintannce.html in 'www' directory
+Protect with attribute 'i'
+
+
+update database
+---------------
+
+The same but + third argument - database name

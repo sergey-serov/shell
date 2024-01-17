@@ -1,0 +1,181 @@
+HOW TO PROTECT SITE
+
+==================================================================
+
+<h2>Before come back online</h2>
+
+Remove text files
+<code>find ./ \( -name "CHANGELOG.txt" -o -name "LICENSE.txt" -o -name "README.txt" -o -name "COPYRIGHT.txt" \) -type f -exec rm {} \;</code>
+
+
+For security reason additionaly we may to delete on the server these files (or exclude them trought rsync when uploading site)
+<pre>/install.php
+/update.php
+/xmlrpc.php
+/INSTALL.mysql.txt
+/INSTALL.pgsql.txt
+/INSTALL.sqlite.txt
+/INSTALL.txt
+/MAINTAINERS.txt
+/UPGRADE.txt
+/scripts</pre>
+
+About update - I update and test sites after update on local workstation.
+For updating is convinient to use drush program.
+After testing fresh site it is useful to upload on the server throught the ssh protocol with rsync.
+One script, one command in command line.
+
+<h2>New operation system on server</h2>
+
+If somebody was able to upload custom execution file on Your server - it is very likely that he was also possible to cure opration system.
+For 100% garantee that operation system is ok, without trojan horses - just to install it again.
+In datacenter hosting support usually provide automated tools for it - You need select what operation system You want to install on Your server, all technical works will be in automate mode and takes about 20 minutes.
+
+After new system was installed - You need to update it, install all necessary software, configure it. This is important and not seample task wich requares a lot of knwledge about different services and process.
+<!-- How to do it: <a href="/en/web-development/cyber-security/how-to-protect-site-and-server">"How to protect site and server"</a>. -->
+
+
+
+https://www.drupal.org/SA-CORE-2014-005
+https://www.drupal.org/drupalsa05FAQ
+
+Last fall my server with about 3 dozens sites on it was broken. Somebody explore and use vulnrability - firewall, webservers (nginx and httpd), php and offcause Drupal - all of them were able to  without approprietly settings and regular update.
+
+In sites document root were alien files - shells.
+I was very surpriced when run one of them - it provide powerful tool for automated server break trought bruteforce to database.
+
+Postfix contented tonn of spam mails.
+Into Drupal system appear new users with administaor roles.
+
+Server in whole was badly broken.
+
+I spent a month to teach thise field - how to rescue site and server, how to protect.
+And finalyy I take several course on www.coursera.com to get fundamental knowledge from hardware security and cryptography to user interface security.
+This is difficult and very useful experince - as result knowledge about volurabilities in server soft lets better understand how server works in whole.
+
+Before this I throught that if I dont break another sites - so nobody will not break my. It was sadly innocence mistake.
+
+With carefull loking in logs it becames clearly that every hour something
+From all arounf world, from different ips - sends badly request to all possible ports and services trying to define system and break it.
+
+I want to share my experience with people, which sites were cured or which wants to protect their sites and server. I wrote instructions for own use firstly - I have a lot of sites which were needed to be rescue. Then I decide that my experience can help people to to rescue infected site and back it online and protect from future attacks.
+
+All software were broken a lot.
+And server which work 24/7 year by year - very pretty claim for bad guys to try their skills.
+****************************************************************
+
+
+/////////////////////////////////
+mysql -u root -p --one-database database_name < ~/forge-home/4_security/incubator/_archive/mysqldump_2014-12-01.sql
+~/forge-home/1_shell_scripts/mysql/database_to_file.sh database_name
+cp ~/forge-home/3_entrepot/database_name.sql /forge-www
+
+
+
+install update for it
+
+<code>yum update</code>
+
+def
+
+
+Protect own server with sites.
+
+-------------------
+
+nikto -h IP
+nikto - web-server security scanner.
+
+for rsync
+
+--info=progress2
+z
+
+trigers
+-------
+
+** basic control
+
+new user
+new role
+new php file
+php-module was activate
+user authorisation
+
+
+** hard control
+
+new comment
+new node
+new block
+
+- php
+-----
+find ./ -name \*.php -exec egrep -H 'base64_decode \(|curl_exec\(|curl_multi_exec\(|error_reporting\(|escapeshellarg\(|escapeshellcmd\(|eval\(|exec\(|highlight_file\(|highlight_string\(|mail\(|parse_ini_file\(|passthru\(|pcntl_alarm\(|pcntl_exec\(|pcntl_fork\(|pcntl_get_last_error\(|pcntl_getpriority\(|pcntl_setpriority\(|pcntl_signal\(|pcntl_signal_dispatch\(|pcntl_sigprocmask\(|pcntl_sigtimedwait\(|pcntl_sigwaitinfo\(|pcntl_strerror\(|pcntl_wait\(|pcntl_waitpid\(|pcntl_wexitstatus\(|pcntl_wifexited\(|pcntl_wifsignaled\(|pcntl_wifstopped\(|pcntl_wstopsig\(|pcntl_wtermsig\(|php_eval\(|phpinfo\(|popen\(|proc_close\(|proc_get_status\(|proc_nice\(|proc_open\(|proc_terminate\(|shell_exec\(|show_source\(|system\(|fopen\(|fclose\(' {} \;
+
+monitor
+-------
+
+drupal watchdog all critical errors like 'DOException'
+
+Find last x changed files:
+find . -type f -printf '%T@ %p\n' | sort -k 1nr | sed 's/^[^ ]* //' | head -n 30
+
+nginx config
+------------
+
+List of all enabled sites in console welcome message.
+
+cron.php is accesseble but only for local ip
+
+GET and POST
+
+deny all by regular expression
+SELECT\s.*FROM or INSERT\s.*INTO
+TRUNCATE
+GRANT
+CHANGE MASTER
+UPDATE
+
+log for all these requests
+
+'internal server error - contact with me....'
+
+? chrome plugin
+-------------
+
+! forest forge pack
+-----------------
+
+- How create password
+---------------------
+
+pwgen gives 160 random strings by 8 symbols each.
+Take two of them and combine to one password.
+Insert any alphabetic or numeric symbol in any position by our taste.
+Good strong password is ready.
+
+- drupal
+--------
+
+Rename user 1 to something not like administrator or admin.
+
+Restrict access to /user by ip.... very good idea for my sites.
+Restrict access for user/1 by for all others....
+
+
+CHATTR
+------
+chattr +i /etc/php.ini
+chattr +i /etc/php.d/*
+chattr +i /etc/my.ini
+chattr +i /etc/httpd/conf/httpd.conf
+chattr +i /etc/
+
+chattr -R +i ./*
+chattr -R -i ./*
+
+find . -name '*~' -exec rm {} \;
+
+# disabled php functions and othes settings:
+https://cloud.google.com/appengine/docs/php/

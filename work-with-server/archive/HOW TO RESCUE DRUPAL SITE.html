@@ -1,0 +1,175 @@
+<h2>Backup all</h2>
+
+Before any works with infected sites will be started strongly necessary backup all data from server.
+
+What is necessary to backup.
+
+<ul>
+<li>Sites document roots.</li>
+<li>Databases.</li>
+<li>Configs for all services. Often - it is enough just backup directory /etc - it contents configs to nginx, httpd, mysql and local services like cron.</li>
+<li>Configs for user programs - like vim, bashrc etc. In common way - this is all system (with dot before name, for example '.vim') files and directories in user home directory.</li>
+<li>Nginx and httpd logs for additional analyze <b>if You have time for this ;)</b>.</li>
+<li>If you really want to explore how a site was attacked and have time for it - backup also system logs in /var/log</li>
+<li>Any another data, which You probably store somewhere on the disk. All what necessary for saving sites data with usually settings were mentioned above.</li>
+</ul>
+
+<b>Do not download files to local workstation</b> if have not antivirus monitor with fresh databases (will be described below)!
+
+
+<h2>Rescue process. On local workstation.</h2>
+
+
+<h3>Antivirus</h3>
+
+<b>First of all we need antivirus!</b> For example Sophos: www.sophos.com
+Good antivirus for web spheare - it finds shells and all others 'bad' files. More others - it control all process in local system and block dangerous for system actions.
+They have trial version - it is enough to rescue sites :)
+
+Additionally if on local workstation is linux - You may install scaner ClamAV. But this is just only additionally to Sophos (or similar with real-time antivirus monitor).
+
+
+<h3>Prepare workspace.</h3>
+
+For rescue sites we will need workspace - incubator. Place where no any malicius script cannot execute and were we will be find malicious files and fragments.
+
+<code>mkdir /home/sergey/forge-home/4_security/incubator</code>
+
+To continue futhure You <b>MUST</b> have antivirus monitor (see above).
+Download backups and place site files and database dump to this incubator.
+Change directory in this place. Unpack all archive.
+
+<code>cd /home/sergey/forge-home/4_security/incubator</code>
+
+Correct local owner for all files.
+Here and fourther when You will need run command as root - use 'sudo'.
+
+<code>chown -R sergey:sergey ./*</code>
+
+Remove execute permission from all files:
+
+<code>find . -type f -exec chmod a-x {} \;</code>
+
+Remove control version files if they exists:
+
+<code>find . -name '.git' -type d -exec rm -rf {} \;</code>
+
+
+<h3>Work with site files and mysqldump</h3>
+
+Check with system antivirus. Collect list with bad files, delete them all:
+
+<code>sudo freshclam</code>
+
+<code>sudo clamscan -r -i .</code>
+
+<code>savscan . -archive</code>
+
+Search in sql and in files specific for suspicious patterns. Consider context for every inset. If these are new not-drupal files - delete them:
+
+<code>find . -type f -name '*.php' -o -name '*.sql' | xargs egrep -i "(preg_replace|base64_decode|\$_COOKIE|\$_POST|mail|fsockopen|pfsockopen|stream_socket_client|file_put_contents|php_eval|phpinfo|SimplePie|PHP_OS|FilesMan|exec|ob_start|phpinfo|passthru|system|eval|php_flag engine on|assert|iframe) *\("</code>
+
+<code>find . -type f -name '*.*' | xargs egrep -i "(preg_replace|base64_decode|\$_COOKIE|\$_POST|mail|fsockopen|pfsockopen|stream_socket_client|file_put_contents|php_eval|phpinfo|SimplePie|PHP_OS|FilesMan|exec|ob_start|phpinfo|passthru|system|eval|php_flag engine on|assert|iframe) *\("</code>
+
+Additionally search in sql only:
+<code>find . -type f -name '*.sql' | xargs egrep -i '(<\?php|iframe)'</code>
+
+Search in non php files php code:
+
+<code>find . -type f -not -name '*.php' -o -not -name '*.inc' -o -not -name '*.module' -print0 | xargs -0 egrep -i '(<\?php|<\?=|<\? *(?!(xml)))'</code>
+
+Finally - search all php files and check if they 'good'.
+
+Some of this pattern very good for automated checks for all uploaded on the server files in future when we will buid defence system.
+
+<code>find . -type f -name '*.php'</code>
+
+Find obfuscated and encrypted with neopi
+https://github.com/neohapsis/neopi
+A lot of positiv false here - this is optional just additional tool
+/home/sergey/forge-home/4_security/neopi.py --csv=neopi-scan-result.scv --all .
+Delete file report after read ./neopi-scan-result.scv
+
+<i>This is useful to open with vim editor bad several files to understand what they are for education purposes.</i>
+
+
+<h3>Work with database only</h3>
+
+Restore database with new user and new password:
+
+<code>mysql -u root -p --one-database db_name < mysqldump_all_databases.sql</code>
+
+Add new user and password to sites/default/settings.php
+
+<h4>With phpmyadmin:</h4>
+
+<li>Truncate tables: 'cache*', 'watchdog', 'sessions'.</li>
+<li>Check users and they emails in table 'users' - delete all unnecessary.</li>
+<li>If init email and current email are differ - change current email.</li>
+<li>Check table 'menu_router table' - unusual paths, 'file_put_contents' and 'assert'.</li>
+<li>Check table 'block_custom'.</li>
+
+Compare infected database with good database from old (before infected) backup:
+
+<code>mysqldump --skip-comments --skip-extended-insert -hlocalhost -uroot -p db_name > db_name-infected.sql</code>
+
+<code>mysqldump --skip-comments --skip-extended-insert -hlocalhost -uroot -p db_name > db_name.sql</code>
+
+<code>diff db_name-infected.sql db_name.sql</code>
+
+
+<h3>Work with site files only</h3>
+
+Download from drupal.org archives with drupal core and all modules. Unpack to new folder.
+
+Copy sites/default/files to new core, libraries and new modules.
+
+Replace with fresh file from new installed drupal /sites/default/files/.htaccess
+
+<code>cp /forge-www/2_fresh_modules/.htaccess sites/default/files</code>
+
+Review code of all own modules and themes in IDE. Line by line. All files.
+
+<h3>drush</h3>
+
+Further on we need special drupal modules for rescue:
+www.drupal.org/project/drupalgeddon
+www.drupal.org/project/site_audit
+
+<code>drush asec</code>
+
+Clear cache with drush:
+
+<code>drush cc all</code>
+
+Reset password for administrator with uid 1:
+<code>drush upwd --password="new-password" admin</code>
+
+After reset passwords for all others users.
+
+<code>drush upwd --password="new-password" editor</code>
+
+<!-- How create new good pass -->
+
+
+<h3>Work with Drupal</h3>
+
+Run site.
+
+Check that 'php-module' is not enable.
+
+If infected site version and current Drupal core version are deffer - update site with update.php
+
+Check roles and permissions - correct all what necessary.
+
+Check custom blocks again.
+
+Check admin/config/content/formats
+
+Audit as possible: nodes, comments. Look - does anywere (blocks, nodes) used php-filter
+
+Finally install this module: www.drupal.org/project/security_review
+After work with this module - disable, uninstall, delete.
+
+Ok, site is clean.
+Now it is time to build server defence!
