@@ -33,6 +33,11 @@ then
 " > ~/.my.cnf
 fi
 
+# Flutter SDK
+if [ -d "$HOME/flutterSDK/flutter/bin" ] ; then
+    PATH="$HOME/flutterSDK/flutter/bin:$PATH"
+fi
+
 # todo iptables
 
 ##
@@ -255,7 +260,7 @@ export PS4="+ \$(printf '%s %3d' line \${LINENO}): \${FUNCNAME[0]:+\${FUNCNAME[0
 # TODO add $(days) -- another name will be good maybe
 
 # systemctl status systemd-timesyncd.service
-timedatectl timesync-status
+run-command "timedatectl timesync-status"
 
 ##
 # Messages from system
@@ -278,9 +283,17 @@ trap "echo 'import this' | python3; sleep 100; exit" 0
 # RUSTUP settings
 #
 . "$HOME/.cargo/env"
-export RUST_BACKTRACE=1
-# export RUST_BACKTRACE=full
+#export RUST_BACKTRACE=1
+export RUST_BACKTRACE=full
+export CARGO_PROFILE_DEV_BUILD_OVERRIDE_DEBUG=true
 
+# export ANDROID_HOME=/home/sergey/Android/Sdk
+# export ANDROID_NDK_ROOT=/home/sergey/android-ndk
+
+# ANDROID_HOME
+# ANDROID_HOME/tools
+# ANDROID_HOME/tools/bin
+# ANDROID_HOME/platform-tools
 
 ##
 # Useful programs for work
