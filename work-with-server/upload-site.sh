@@ -84,4 +84,5 @@ work-end-summary "$TASK_NAME"
 
 # drupal_exclude='--exclude=/sites/default/files /sites/default/settings.local.php'
 
-
+# works! use as example.
+# rsync -rzthiPvn --stats -e "ssh -p 22" /var/www/site/www/ sergey@fortress:/var/www/site/backup/

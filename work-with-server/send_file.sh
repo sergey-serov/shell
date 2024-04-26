@@ -5,14 +5,14 @@
 # DESCRIPTION
 #############
 # Send file from local workstation to server
-# File must be in "Entrepot" 
+# File must be in "Entrepot"
 # $HOME_ENTREPOT="/home/sergey/forge-home/3_entrepot"
 
 
 # HELP
 ######
 
-# $1 = file name 
+# $1 = file name
 
 
 # CONFIG
@@ -40,3 +40,7 @@ if [[ $IS_SILENT != s ]]; then
 	$HOME_SCRIPT_SERVICES/work-end-summary.sh "Sending file '$FILE_NAME'"
 	$HOME_SCRIPT_SERVICES/work-end-sound.sh
 fi
+
+# warehouse
+# works!
+# scp -P 22 ~/Downloads/file.sql sergey@fortress:/home/sergey
